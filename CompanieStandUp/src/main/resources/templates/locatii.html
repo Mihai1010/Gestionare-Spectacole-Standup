@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Locații</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h2>Locații disponibile</h2>
+    <table style="width:100%; border-collapse: collapse;">
+        <tr>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px;">Nume Locație</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px;">Oraș</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px;">Adresă</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px;">Capacitate</th>
+        </tr>
+        <tr th:each="l : ${locatii}">
+            <td th:text="${l.nume_locatie}" style="padding: 8px;"></td>
+            <td th:text="${l.oras}" style="padding: 8px;"></td>
+            <td th:text="${l.strada + ' ' +  l.numar}" style="padding: 8px;"></td>
+            <td th:text="${l.capacitate}" style="padding: 8px;"></td>
+        </tr>
+    </table>
+    <br>
+    <a th:href="@{'/welcome?email=' + ${session.email}}" class="back-link">Înapoi la pagina principala</a></div>
+</body>
+</html>

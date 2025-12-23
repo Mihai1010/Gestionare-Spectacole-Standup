@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Istoric cumpărări client</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin-styles.css}">
+</head>
+<body>
+<div class="container mt-4" th:with="row=${#lists.isEmpty(history) ? null : history[0]}">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 th:text="${row != null ? 'Istoric client: ' + row.nume + ' ' + row.prenume : 'Istoric client'}"></h2>
+        <a href="/admin" class="btn btn-secondary btn-sm">Înapoi la Dashboard</a>
+    </div>
+
+    <div class="row mb-3" th:if="${row != null}">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Statistici generale</h5>
+                    <p class="card-text mb-1">Total bilete: <span th:text="${row.total_tickets}"></span></p>
+                    <p class="card-text mb-1">Preț mediu bilet: <span th:text="${#numbers.formatDecimal(row.avg_ticket_price,1,2,'POINT')}"></span> RON</p>
+                    <p class="card-text mb-1">Cel mai scump spectacol: <span th:text="${row.most_expensive_show}"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${row == null}" class="alert alert-info">
+        Nu au fost găsite informații pentru acest client (ID: <span th:text="${clientId}"></span>).
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

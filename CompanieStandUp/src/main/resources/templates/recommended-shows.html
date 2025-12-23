@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recomandări spectacole</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h2 th:text="'Recomandări pentru ' + ${client.nume} + ' ' + ${client.prenume}"></h2>
+
+    <div th:if="${#lists.isEmpty(recommendedShows)}" style="margin-top: 20px;">
+        Nu există recomandări de spectacole pentru tine în acest moment.
+    </div>
+
+    <div th:if="${!#lists.isEmpty(recommendedShows)}" style="margin-top: 20px; text-align: left;">
+        <table class="styled-table">
+            <thead>
+            <tr>
+                <th>Titlu</th>
+                <th>Locație</th>
+                <th>Oraș</th>
+                <th>Dată</th>
+                <th>Preț</th>
+                <th>Cumpără Bilet</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="show : ${recommendedShows}">
+                <td th:text="${show.titlu}"></td>
+                <td th:text="${show.nume_locatie}"></td>
+                <td th:text="${show.oras}"></td>
+                <td th:text="${#dates.format(show.data_spectacol, 'dd-MM-yyyy HH:mm')}"></td>
+                <td th:text="${show.pret_bilet + ' RON'}"></td>
+                <td>
+                    <a th:href="@{/cumpara-bilet(city=${show.oras}, showId=${show.id_spectacol})}"
+                       class="btn-link">
+                        Cumpără bilet
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a th:href="@{'/welcome?email=' + ${client.email}}" class="btn-link">Înapoi la pagina principală</a>
+    </div>
+</div>
+</body>
+</html>

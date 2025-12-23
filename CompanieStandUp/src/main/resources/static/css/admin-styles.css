@@ -1,0 +1,80 @@
+/* Base admin layout */
+body {
+    background-color: #f1f3f5;
+}
+
+.sidebar {
+    min-height: 100vh;
+    background-color: #343a40;
+    color: #ffffff;
+    padding-top: 20px;
+}
+
+.sidebar h4 {
+    color: #ffffff;
+}
+
+.sidebar a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    color: #ffffff;
+    background-color: #495057;
+}
+
+.main-content {
+    padding: 20px;
+}
+
+.welcome-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* Tables and cards */
+.table-responsive {
+    margin-top: 20px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.show-card {
+    transition: transform 0.2s;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.show-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.show-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+}
+
+.badge-available {
+    background-color: #28a745;
+}
+
+.badge-sold-out {
+    background-color: #dc3545;
+}
+
+/* Utility spacing for logout link */
+.sidebar a.mt-5 {
+    margin-top: 3rem !important;
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h2>Înregistrare</h2>
+
+    <form th:action="@{/signup}" method="post">
+        <input type="text" name="nume" placeholder="Nume" required>
+        <input type="text" name="prenume" placeholder="Prenume" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="telefon" placeholder="Telefon" required>
+        <input type="password" name="parola" placeholder="Parola" required>
+        <button type="submit">Creează cont</button>
+    </form>
+
+    <p>Ai deja cont? <a href="/login">Login</a></p>
+</div>
+</body>
+</html>

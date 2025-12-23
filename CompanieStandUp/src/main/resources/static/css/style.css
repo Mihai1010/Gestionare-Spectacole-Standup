@@ -1,0 +1,250 @@
+/*
+ * Stiluri Generale
+ */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #121212; /* Fundal închis, specific pentru spectacole */
+    color: #E0E0E0; /* Text deschis pentru contrast */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #1E1E1E; /* Fundal container puțin mai deschis */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Umbră subtilă */
+    width: 90%;
+    max-width: 600px; /* Lățime maximă pentru formulare și pagini simple */
+    text-align: center;
+    margin: 20px;
+}
+
+/* Stiluri pentru Headere */
+h2 {
+    color: #FFC107; /* Culoare galben-auriu pentru accent */
+    margin-bottom: 25px;
+    font-size: 2em;
+    border-bottom: 2px solid #FFC107;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* Stiluri pentru Formulare (Login) */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #2D2D2D; /* Input field închis */
+    color: #E0E0E0;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #FFC107; /* Efect de focus */
+}
+
+/* Stiluri pentru dropdown-uri */
+select.form-control {
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #2D2D2D;
+    color: #E0E0E0;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFC107' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 20px;
+    padding-right: 45px;
+}
+
+select.form-control:hover {
+    background-color: #353535;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+}
+
+select.form-control:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #FFC107;
+    background-color: #353535;
+}
+
+select.form-control option {
+    background-color: #2D2D2D;
+    color: #E0E0E0;
+    padding: 12px 15px;
+    border: none;
+    font-size: 1em;
+}
+
+select.form-control option:hover,
+select.form-control option:checked {
+    background-color: #FFC107;
+    color: #121212;
+}
+
+button[type="submit"] {
+    background-color: #FFC107;
+    color: #121212;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #FFD54F; /* Culoare mai deschisă la hover */
+    transform: translateY(-2px);
+}
+
+/* Stiluri pentru Mesaje de Eroare */
+.error {
+    color: #FF4500; /* Roșu-portocaliu pentru erori */
+    margin-top: 15px;
+    font-weight: bold;
+    background-color: #3A1C1C;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Stiluri pentru Butoane/Link-uri */
+/* Stiluri pentru Butoane/Link-uri (Pagina Welcome) */
+/* Stiluri pentru Butoane/Link-uri (Pagina Welcome) */
+.container-butoane {
+    /* Centrarea și spațierea butoanelor */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spațiu între butoane */
+    margin-top: 30px;
+    padding: 0 50px; /* Adaugă padding lateral în container pentru a nu fi lipite de margine */
+}
+
+.btn-link {
+    /* Face link-ul să se comporte ca un bloc, ocupând lățimea completă a containerului */
+    display: block;
+
+    background-color: #FFD54F; /* Fundal Verde Solid */
+    color: black; /* Text Alb pentru vizibilitate maximă */
+
+    padding: 15px 20px; /* Mai mult padding pentru un buton mai mare */
+    text-align: center; /* Centrează textul în buton */
+    text-decoration: none;
+
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1em; /* Mărește textul */
+
+    opacity: 1; /* Asigură-te că nu există transparență */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-link:hover {
+    background-color: #FFD54F; /* Verde mai deschis la hover */
+    transform: scale(1.01);
+}
+
+/* Stiluri pentru Pagina Locații */
+.container.locatii-container {
+    max-width: 900px; /* Lățime mai mare pentru tabelul de locații */
+}
+
+/* Stiluri pentru Tabele */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow: hidden; /* Asigură că border-radius se aplică */
+}
+
+.styled-table thead tr {
+    background-color: #FFC107; /* Galben-auriu pentru antet */
+    color: #121212;
+    text-align: left;
+    font-weight: bold;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #333;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #2D2D2D;
+    transition: background-color 0.3s ease;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #252525; /* Rânduri alternate pentru lizibilitate */
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #FFC107;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #333333; /* Efect de hover pe rânduri */
+}
+
+/* Ajustare pentru link-ul "Înapoi" din locatii.html */
+/* Deoarece ai stiluri inline în locatii.html, trebuie să le suprascrii sau să folosești stilul de mai jos */
+/* Stiluri pentru link-ul "Înapoi la pagina principala" */
+a[href*="/welcome"] {
+    text-decoration: none !important;
+    color: #4CAF50 !important;
+    font-weight: bold;
+    margin-top: 15px;
+    display: inline-block;
+}
+
+a[href*="/welcome"]:hover {
+    color: #66BB6A !important;
+}
+
+/* Stiluri pentru fundal (poze/imagine relevantă) */
+/* Voi adăuga un fundal discret, relevant pentru standup */
+body {
+    background-image: url('standup_mic_background.jpg'); /* Presupunând că ai o imagine numită 'standup_mic_background.jpg' */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Fundal fix */
+}
+
+/* Stil pentru a face containerele semi-transparente pentru a vedea fundalul */
+.container {
+    background-color: rgba(30, 30, 30, 0.95); /* Culoare container cu o mică transparență */
+}
+
+/* Poți folosi o imagine de fundal mai abstractă sau o textură, dacă nu vrei o poză specifică.
+   Dacă nu vrei să adaugi o imagine (pentru simplitate), elimină secțiunea body {} de mai sus.
+*/

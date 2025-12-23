@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cumpără bilet</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container bilete-container">
+    <h2>Cumpără bilet</h2>
+
+    <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+
+    <form th:action="@{/cumpara-bilet}" method="post">
+        <input type="hidden" name="idClient" th:value="${client.id_client}"/>
+
+        <div class="form-group">
+            <label for="citySelect">Oraș</label>
+            <select id="citySelect" class="form-control">
+                <option value="">-- Alege orașul --</option>
+                <option th:each="loc : ${locatii}"
+                        th:value="${loc.oras}"
+                        th:text="${loc.oras}"
+                        th:selected="${selectedCity != null and selectedCity == loc.oras}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="showSelect">Spectacol</label>
+            <select id="showSelect" name="idSpectacol" class="form-control" required>
+                <option value="">-- Alege spectacolul --</option>
+                <option th:each="show : ${shows}"
+                        th:value="${show.id_spectacol}"
+                        th:text="${show.titlu + ' - ' + show.nume_locatie}"
+                        th:attr="data-oras=${show.oras}"
+                        th:selected="${selectedShowId != null and selectedShowId == show.id_spectacol}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="randSelect">Rand (1-10)</label>
+            <select id="randSelect" name="rand" class="form-control" required>
+                <option value="">-- Alege randul --</option>
+                <option th:each="i : ${#numbers.sequence(1,10)}"
+                        th:value="${i}"
+                        th:text="${i}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="locSelect">Loc (1-20)</label>
+            <select id="locSelect" name="loc" class="form-control" required>
+                <option value="">-- Alege locul --</option>
+                <option th:each="i : ${#numbers.sequence(1,20)}"
+                        th:value="${i}"
+                        th:text="${i}"></option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-link">Cumpără bilet</button>
+    </form>
+
+    <br>
+    <a th:href="@{'/welcome?email=' + ${session.email}}" class="back-link">Înapoi la pagina principală</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const citySelect = document.getElementById('citySelect');
+        const showSelect = document.getElementById('showSelect');
+
+        function filterShows() {
+            const selectedCity = citySelect.value;
+            const options = showSelect.querySelectorAll('option');
+
+            options.forEach(option => {
+                const oras = option.getAttribute('data-oras');
+                if (!oras) {
+                    option.style.display = '';
+                    return;
+                }
+                if (!selectedCity || oras === selectedCity) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                    if (option.selected) {
+                        option.selected = false;
+                    }
+                }
+            });
+        }
+
+        citySelect.addEventListener('change', filterShows);
+        filterShows();
+    });
+</script>
+</body>
+</html>

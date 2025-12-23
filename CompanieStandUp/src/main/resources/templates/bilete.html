@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Biletele tale</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container bilete-container">
+    <h2>Biletele tale</h2>
+
+    <table class="styled-table">
+        <thead>
+        <tr>
+            <th>Spectacol</th>
+            <th>Data</th>
+            <th>Rand</th>
+            <th>Loc</th>
+            <th>Pret bilet</th>
+            <th>Data Achizitie</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="b : ${bilete}">
+            <td th:text="${b.titlu}"></td>
+            <td th:text="${#dates.format(b.data_spectacol, 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="${b.rand}"></td>
+            <td th:text="${b.loc}"></td>
+            <td th:text="${b.pret_bilet} + ' RON'"></td>
+            <td th:text="${#dates.format(b.data_achizitie, 'dd/MM/yyyy HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <a th:href="@{/welcome(email=${email})}" class="back-link">Înapoi</a>
+
+</div>
+</body>
+</html>

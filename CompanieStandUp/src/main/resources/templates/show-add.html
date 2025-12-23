@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaugă Spectacol - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin-styles.css}">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <h4 class="text-center mb-4">Admin Panel</h4>
+            <hr>
+            <a href="/admin">Dashboard</a>
+            <a href="/admin/clients">Clienți</a>
+            <a href="/admin/shows" class="active">Spectacole</a>
+            <a href="/admin/locations">Locații</a>
+            <a href="/admin/artists">Artiști</a>
+            <a href="/admin/tickets">Bilete</a>
+            <a href="/logout" class="mt-5">Deconectare</a>
+        </div>
+
+        <div class="col-md-10 main-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Adaugă Spectacol Nou</h2>
+                <a href="/admin/shows" class="btn btn-secondary">Înapoi la Spectacole</a>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Detalii Spectacol</div>
+                <div class="card-body">
+                    <form th:action="@{/admin/shows/add}" method="post" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="titlu" class="form-label">Titlu</label>
+                            <input type="text" class="form-control" id="titlu" name="titlu" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_locatie" class="form-label">Locație</label>
+                            <select class="form-select" id="id_locatie" name="id_locatie" required>
+                                <option value="" disabled selected>Selecționează locația</option>
+                                <option th:each="loc : ${locations}"
+                                        th:value="${loc.id_locatie}"
+                                        th:text="${loc.nume_locatie + ' - ' + loc.oras}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data_spectacol" class="form-label">Data și ora</label>
+                            <input type="datetime-local" class="form-control" id="data_spectacol" name="data_spectacol" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="pret_bilet" class="form-label">Preț bilet</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="pret_bilet" name="pret_bilet" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="artist1Id" class="form-label">Artist 1</label>
+                            <select class="form-select" id="artist1Id" name="artist1Id" required>
+                                <option value="" disabled selected>Selecționează artistul</option>
+                                <option th:each="artist : ${artists}"
+                                        th:value="${artist.id_artist}"
+                                        th:text="${artist.nume} + ' ' + ${artist.prenume}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="artist2Id" class="form-label">Artist 2 (opțional)</label>
+                            <select class="form-select" id="artist2Id" name="artist2Id">
+                                <option value="" selected>Niciun artist</option>
+                                <option th:each="artist : ${artists}"
+                                        th:value="${artist.id_artist}"
+                                        th:text="${artist.nume} + ' ' + ${artist.prenume}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="artist3Id" class="form-label">Artist 3 (opțional)</label>
+                            <select class="form-select" id="artist3Id" name="artist3Id">
+                                <option value="" selected>Niciun artist</option>
+                                <option th:each="artist : ${artists}"
+                                        th:value="${artist.id_artist}"
+                                        th:text="${artist.nume} + ' ' + ${artist.prenume}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Adaugă Spectacol</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

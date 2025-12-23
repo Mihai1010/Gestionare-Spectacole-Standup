@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Raport Clienți Frecvenți</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin-styles.css}">
+</head>
+<body>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Clienți frecvenți (VIP)</h2>
+        <a href="/admin" class="btn btn-secondary btn-sm">Înapoi la Dashboard</a>
+    </div>
+
+    <form th:action="@{/admin/reports/vip}" method="get" class="row g-2 align-items-center mb-3">
+        <div class="col-auto">
+            <label for="minShows" class="col-form-label">Minim spectacole vizionate:</label>
+        </div>
+        <div class="col-auto">
+            <input type="number" class="form-control form-control-sm" id="minShows" name="minShows"
+                   th:value="${minShows}" min="1">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary btn-sm">Filtrează</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th>Nume</th>
+                <th>Prenume</th>
+                <th>Email</th>
+                <th>Spectacole vizionate</th>
+                <th>Total cheltuit (RON)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="client : ${vipClients}">
+                <td th:text="${client.nume}"></td>
+                <td th:text="${client.prenume}"></td>
+                <td th:text="${client.email}"></td>
+                <td th:text="${client.shows_attended}"></td>
+                <td th:text="${#numbers.formatDecimal(client.total_spent,1,2,'POINT')}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(vipClients)}">
+                <td colspan="5" class="text-center">Nu există clienți care să îndeplinească filtrul.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

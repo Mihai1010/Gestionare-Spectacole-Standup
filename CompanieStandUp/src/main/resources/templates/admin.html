@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin-styles.css}">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+                <h4 class="text-center mb-4">Admin Panel</h4>
+                <hr>
+                <a href="/admin">Dashboard</a>
+                <a href="/admin/clients">Clienți</a>
+                <a href="/admin/shows">Spectacole</a>
+                <a href="/admin/locations">Locații</a>
+                <a href="/admin/artists">Artiști</a>
+                <a href="/admin/tickets">Bilete</a>
+                <a href="/admin/participations">Participări</a>
+                <a href="/logout" class="mt-5">Deconectare</a>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Admin Dashboard</h2>
+                    <div class="text-muted">
+                        Conectat ca: <span th:text="${adminEmail}" class="fw-bold">admin@admin.com</span>
+                    </div>
+                </div>
+                
+                <div class="welcome-section">
+                    <h4>Bun venit la Admin Dashboard</h4>
+                </div>
+
+                <!-- Report Buttons -->
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Spectacole populare</h5>
+                                <p class="card-text">Top spectacole după numărul de bilete vândute.</p>
+                                <a href="/admin/reports/popular" class="btn btn-sm btn-primary">Vezi raport</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Clienți frecvenți</h5>
+                                <p class="card-text">Clienți care au participat la cele mai multe spectacole.</p>
+                                <a href="/admin/reports/vip" class="btn btn-sm btn-primary">Vezi raport</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Performanță artiști</h5>
+                                <p class="card-text">Statistici despre spectacolele fiecărui artist.</p>
+                                <a href="/admin/reports/artists" class="btn btn-sm btn-primary">Vezi raport</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Istoric client</h5>
+                                <p class="card-text">Introduceți ID-ul unui client pentru a vedea istoricul.</p>
+                                <form th:action="@{/admin/reports/client-history}" method="get" class="d-flex justify-content-center">
+                                    <input type="number" name="clientId" class="form-control form-control-sm me-2" placeholder="ID client" min="1" required>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Deschide</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Clienti</h5>
+                                <h2 class="card-text" th:text="${userCount}">Loading...</h2>
+                                <a href="/admin/clients" class="btn btn-sm btn-primary">Vezi tot</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Spectacole</h5>
+                                <h2 class="card-text" th:text="${showsCount}">Loading...</h2>
+                                <a href="/admin/shows" class="btn btn-sm btn-primary">Vezi tot</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Bilete</h5>
+                                <h2 class="card-text" th:text="${ticketsCount}">Loading...</h2>
+                                <a href="/admin/tickets" class="btn btn-sm btn-primary">Vezi tot</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Spectacole populare</h5>
+                                <p class="card-text">Top spectacole după numărul de bilete vândute.</p>
+                                <a href="/admin/reports/popular" class="btn btn-sm btn-primary">Vezi raport</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Clienți frecvenți</h5>
+                                <p class="card-text">Clienți care au participat la cele mai multe spectacole.</p>
+                                <a href="/admin/reports/vip" class="btn btn-sm btn-primary">Vezi raport</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Performanță artiști</h5>
+                                <p class="card-text">Statistici despre spectacolele fiecărui artist.</p>
+                                <a href="/admin/reports/artists" class="btn btn-sm btn-primary">Vezi raport</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Istoric client</h5>
+                                <p class="card-text">Introduceți ID-ul unui client pentru a vedea istoricul.</p>
+                                <form th:action="@{/admin/reports/client-history}" method="get" class="d-flex justify-content-center">
+                                    <input type="number" name="clientId" class="form-control form-control-sm me-2" placeholder="ID client" min="1" required>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Deschide</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
