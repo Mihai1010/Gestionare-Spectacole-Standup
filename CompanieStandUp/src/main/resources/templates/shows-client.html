@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista spectacole</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container bilete-container">
+    <h2>Lista spectacolelor</h2>
+
+    <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="cityFilter">Filtrează după oraș:</label>
+        <select id="cityFilter" class="form-control">
+            <option value="">Toate orașele</option>
+            <!-- Opțiunile de oraș vor fi populate din JavaScript pe baza rândurilor din tabel -->
+        </select>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Titlu</th>
+            <th>Locație</th>
+            <th>Dată</th>
+            <th>Preț</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="show : ${shows}" th:attr="data-oras=${show.oras}">
+            <td th:text="${show.titlu}"></td>
+            <td>
+                <span th:text="${show.nume_locatie}"></span>
+                <span class="text-muted" th:text="', ' + ${show.oras}"></span>
+            </td>
+            <td th:text="${#dates.format(show.data_spectacol, 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${show.pret_bilet}"></td>
+            <td th:text="${show.status}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(shows)}">
+            <td colspan="5">Nu există spectacole înregistrate.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{'/welcome?email=' + ${session.email}}" class="back-link">Înapoi la pagina principală</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const cityFilter = document.getElementById('cityFilter');
+        const rows = document.querySelectorAll('table tbody tr[th\\:each], table tbody tr[data-oras]');
+
+        // Construim lista unică de orașe din rânduri
+        const cities = new Set();
+        rows.forEach(row => {
+            const oras = row.getAttribute('data-oras');
+            if (oras) {
+                cities.add(oras);
+            }
+        });
+
+        // Adăugăm opțiunile în select
+        cities.forEach(oras => {
+            const option = document.createElement('option');
+            option.value = oras;
+            option.textContent = oras;
+            cityFilter.appendChild(option);
+        });
+
+        function applyFilter() {
+            const selectedCity = cityFilter.value;
+            rows.forEach(row => {
+                const oras = row.getAttribute('data-oras');
+                if (!selectedCity || !oras || oras === selectedCity) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        cityFilter.addEventListener('change', applyFilter);
+        applyFilter();
+    });
+</script>
+
+</body>
+</html>

@@ -65,6 +65,17 @@ public class LoginController {
 
             Model model) {
 
+        // Validare simplă pe server pentru login
+        if (email == null || email.isBlank() || parola == null || parola.isBlank()) {
+            model.addAttribute("error", "Emailul și parola sunt obligatorii.");
+            return "login";
+        }
+
+        if (!email.contains("@")) {
+            model.addAttribute("error", "Email invalid. Te rugăm să introduci un email valid.");
+            return "login";
+        }
+
         if ("admin@admin.com".equals(email) && "admin".equals(parola)) {
             return "redirect:/admin";
         }
@@ -97,8 +108,39 @@ public class LoginController {
 
                                @RequestParam String telefon,
 
-                               @RequestParam String parola) {
+                               @RequestParam String parola,
 
+                               Model model) {
+
+        // Validare simplă pe server cu mesaje explicite
+        if (nume == null || nume.isBlank() || prenume == null || prenume.isBlank() ||
+                email == null || email.isBlank() || telefon == null || telefon.isBlank() ||
+                parola == null || parola.isBlank()) {
+            model.addAttribute("error", "Toate câmpurile sunt obligatorii.");
+            return "signup";
+        }
+
+        if(telefon.length() != 10) {
+            model.addAttribute("error", "Telefonul trebuie să conțină exact 10 cifre.");
+            return "signup";
+        }
+
+        if(clientService.getClientByEmail(email) != null) {
+            model.addAttribute("error", "Email-ul există deja.");
+            return "signup";
+        }
+
+        if (!email.contains("@")) {
+            model.addAttribute("error", "Email invalid. Te rugăm să introduci un email valid.");
+            return "signup";
+        }
+
+        if (parola.length() < 4) {
+            model.addAttribute("error", "Parola trebuie să conțină cel puțin 4 caractere.");
+            return "signup";
+        }
+
+        // Dacă totul este ok, creăm clientul și mergem la login
         clientService.createClient(nume, prenume, email, telefon, parola);
 
         return "redirect:/login";
@@ -144,7 +186,15 @@ public class LoginController {
     }
 
     @GetMapping("/admin/reports/client-history")
-    public String clientPurchaseHistory(@RequestParam("clientId") int clientId, Model model) {
+    public String clientPurchaseHistory(@RequestParam(value = "clientId", required = false) Integer clientId,
+                                        Model model,
+                                        RedirectAttributes redirectAttributes) {
+
+        if (clientId == null || clientId <= 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "ID invalid.");
+            return "redirect:/admin";
+        }
+
         List<Map<String, Object>> history = clientService.getClientPurchaseHistory(clientId);
         model.addAttribute("history", history);
         model.addAttribute("clientId", clientId);
@@ -184,16 +234,36 @@ public class LoginController {
 
     @PostMapping("/admin/clients/edit/{id}")
     public String editClientSubmit(@PathVariable int id,
-                                  @RequestParam String nume,
-                                  @RequestParam String prenume,
-                                  @RequestParam String email,
-                                  @RequestParam String telefon,
-                                  @RequestParam String parola,
-                                  RedirectAttributes redirectAttributes) {
+                                   @RequestParam String nume,
+                                   @RequestParam String prenume,
+                                   @RequestParam String email,
+                                   @RequestParam String telefon,
+                                   @RequestParam String parola,
+                                   RedirectAttributes redirectAttributes) {
         try {
+            if (nume == null || nume.isBlank() || prenume == null || prenume.isBlank() ||
+                    email == null || email.isBlank() || telefon == null || telefon.isBlank() ||
+                    parola == null || parola.isBlank()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Toate câmpurile sunt obligatorii.");
+                return "redirect:/admin/clients/edit/" + id;
+            }
+
+            if (!email.contains("@")) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Email invalid. Te rugăm să introduci un email valid.");
+                return "redirect:/admin/clients/edit/" + id;
+            }
+
+            if (telefon.length() != 10) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Telefonul trebuie să conțină exact 10 cifre.");
+                return "redirect:/admin/clients/edit/" + id;
+            }
+
             clientService.updateClient(id, nume, prenume, email, telefon, parola);
+            redirectAttributes.addFlashAttribute("successMessage", "Clientul a fost actualizat cu succes.");
         } catch (Exception e) {
             e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "A apărut o eroare la actualizarea clientului.");
+            return "redirect:/admin/clients/edit/" + id;
         }
         return "redirect:/admin/clients";
     }
@@ -225,22 +295,72 @@ public class LoginController {
 
     @PostMapping("/admin/shows/add")
     public String addShow(@RequestParam String titlu,
-                          @RequestParam("id_locatie") int idLocatie,
-                          @RequestParam("data_spectacol") String dataSpectacolStr,
-                          @RequestParam("pret_bilet") double pretBilet,
+                          @RequestParam(value = "id_locatie", required = false) Integer idLocatie,
+                          @RequestParam(value = "data_spectacol", required = false) String dataSpectacolStr,
+                          @RequestParam(value = "pret_bilet", required = false) Double pretBilet,
+                          @RequestParam(value = "durata_minute", required = false) Integer durata_minute,
                           @RequestParam(value = "artist1Id", required = false) Integer artist1Id,
                           @RequestParam(value = "artist2Id", required = false) Integer artist2Id,
                           @RequestParam(value = "artist3Id", required = false) Integer artist3Id,
                           RedirectAttributes redirectAttributes) {
         try {
-            java.time.LocalDateTime ldt = java.time.LocalDateTime.parse(dataSpectacolStr);
+            if (titlu == null || titlu.isBlank()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Titlul spectacolului este obligatoriu.");
+                return "redirect:/admin/shows/add";
+            }
+
+            if (idLocatie == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Te rugăm să selectezi o locație.");
+                return "redirect:/admin/shows/add";
+            }
+
+            if (dataSpectacolStr == null || dataSpectacolStr.isBlank()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Data și ora spectacolului sunt obligatorii.");
+                return "redirect:/admin/shows/add";
+            }
+
+            if (pretBilet == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Prețul biletului este obligatoriu.");
+                return "redirect:/admin/shows/add";
+            }
+            if (pretBilet < 0) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Prețul biletului nu poate fi negativ.");
+                return "redirect:/admin/shows/add";
+            }
+
+            if (durata_minute == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Durata spectacolului este obligatorie.");
+                return "redirect:/admin/shows/add";
+            }
+            if (durata_minute <= 0) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Durata trebuie să fie un număr pozitiv de minute.");
+                return "redirect:/admin/shows/add";
+            }
+
+            java.time.LocalDateTime ldt;
+            try {
+                ldt = java.time.LocalDateTime.parse(dataSpectacolStr);
+            } catch (Exception ex) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Formatul pentru data și ora spectacolului este invalid.");
+                return "redirect:/admin/shows/add";
+            }
+
+            if (ldt.isBefore(java.time.LocalDateTime.now())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Data spectacolului trebuie să fie în viitor.");
+                return "redirect:/admin/shows/add";
+            }
+
             java.sql.Timestamp ts = java.sql.Timestamp.valueOf(ldt);
-            showService.createShow(titlu, idLocatie, ts, pretBilet, artist1Id, artist2Id, artist3Id);
+            showService.createShow(titlu, idLocatie, ts, pretBilet, durata_minute, artist1Id, artist2Id, artist3Id);
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin/shows/add";
         } catch (Exception e) {
             e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "A apărut o eroare la adăugarea spectacolului.");
+            return "redirect:/admin/shows/add";
         }
+        redirectAttributes.addFlashAttribute("successMessage", "Spectacolul a fost adăugat cu succes.");
         return "redirect:/admin/shows";
     }
 
@@ -318,11 +438,31 @@ public class LoginController {
                                    @RequestParam("data_nasterii") @DateTimeFormat(pattern = "yyyy-MM-dd") java.util.Date dataNasterii,
                                    RedirectAttributes redirectAttributes) {
         try {
+            if (nume == null || nume.isBlank() || prenume == null || prenume.isBlank() ||
+                    email == null || email.isBlank() || telefon == null || telefon.isBlank() ||
+                    dataNasterii == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Toate câmpurile sunt obligatorii.");
+                return "redirect:/admin/artists/edit/" + id;
+            }
+
+            if (!email.contains("@")) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Email invalid. Te rugăm să introduci un email valid.");
+                return "redirect:/admin/artists/edit/" + id;
+            }
+
+            if (telefon.length() != 10) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Telefonul trebuie să conțină exact 10 cifre.");
+                return "redirect:/admin/artists/edit/" + id;
+            }
+
             java.sql.Date sqlDate = new java.sql.Date(dataNasterii.getTime());
             artistService.updateArtist(id, nume, prenume, email, telefon, sqlDate);
-            
+            redirectAttributes.addFlashAttribute("successMessage", "Artistul a fost actualizat cu succes.");
+
         } catch (Exception e) {
             e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "A apărut o eroare la actualizarea artistului.");
+            return "redirect:/admin/artists/edit/" + id;
         }
         return "redirect:/admin/artists";
     }
@@ -434,7 +574,8 @@ public class LoginController {
         Map<String, Object> client = clientService.getClientByEmail(email);
         model.addAttribute("client", client);
         model.addAttribute("locatii", clientService.getLocatii());
-        model.addAttribute("shows", showService.getAllShows());
+        // Pentru cumpărarea de bilete afișăm doar spectacolele viitoare
+        model.addAttribute("shows", showService.getUpcomingShows());
 
         // Preselect city and show if coming from recommendations
         if (city != null && !city.isEmpty()) {
@@ -448,12 +589,55 @@ public class LoginController {
 
     }
 
+    @GetMapping("/spectacole")
+    public String listaSpectacole(HttpSession session, Model model) {
+
+        String email = (String) session.getAttribute("email");
+
+        if (email == null) {
+            return "redirect:/login";
+        }
+
+        Map<String, Object> client = clientService.getClientByEmail(email);
+        model.addAttribute("client", client);
+        model.addAttribute("shows", showService.getAllShows());
+
+        return "shows-client";
+    }
+
     @PostMapping("/cumpara-bilet")
     public String cumparaBiletSubmit(@RequestParam int idClient,
-                                     @RequestParam int idSpectacol,
-                                     @RequestParam int rand,
-                                     @RequestParam int loc,
+                                     @RequestParam(value = "city", required = false) String city,
+                                     @RequestParam(value = "idSpectacol", required = false) Integer idSpectacol,
+                                     @RequestParam(value = "rand", required = false) Integer rand,
+                                     @RequestParam(value = "loc", required = false) Integer loc,
                                      RedirectAttributes redirectAttributes) {
+
+        // Validare în ordine: oraș, spectacol, rând, loc
+        if (city == null || city.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Te rugăm să selectezi un oraș.");
+            return "redirect:/cumpara-bilet";
+        }
+
+        if (idSpectacol == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Te rugăm să selectezi un spectacol.");
+            redirectAttributes.addAttribute("city", city);
+            return "redirect:/cumpara-bilet";
+        }
+
+        if (rand == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Te rugăm să selectezi un rând.");
+            redirectAttributes.addAttribute("city", city);
+            redirectAttributes.addAttribute("showId", idSpectacol);
+            return "redirect:/cumpara-bilet";
+        }
+
+        if (loc == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Te rugăm să selectezi un loc.");
+            redirectAttributes.addAttribute("city", city);
+            redirectAttributes.addAttribute("showId", idSpectacol);
+            return "redirect:/cumpara-bilet";
+        }
 
         try {
             clientService.createTicket(idClient, idSpectacol, rand, loc);
@@ -465,6 +649,9 @@ public class LoginController {
             redirectAttributes.addFlashAttribute("errorMessage", "A apărut o eroare la achiziționarea biletului.");
         }
 
+        // La succes revenim pe pagina de cumpărare cu selecțiile păstrate
+        redirectAttributes.addAttribute("city", city);
+        redirectAttributes.addAttribute("showId", idSpectacol);
         return "redirect:/cumpara-bilet";
 
     }

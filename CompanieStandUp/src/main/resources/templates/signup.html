@@ -9,12 +9,14 @@
 <div class="container">
     <h2>Înregistrare</h2>
 
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
     <form th:action="@{/signup}" method="post">
-        <input type="text" name="nume" placeholder="Nume" required>
-        <input type="text" name="prenume" placeholder="Prenume" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="text" name="telefon" placeholder="Telefon" required>
-        <input type="password" name="parola" placeholder="Parola" required>
+        <input type="text" name="nume" placeholder="Nume">
+        <input type="text" name="prenume" placeholder="Prenume">
+        <input type="email" name="email" placeholder="Email">
+        <input type="text" name="telefon" placeholder="Telefon">
+        <input type="password" name="parola" placeholder="Parola">
         <button type="submit">Creează cont</button>
     </form>
 

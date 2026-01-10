@@ -19,6 +19,7 @@
             <a href="/admin/locations">Locații</a>
             <a href="/admin/artists">Artiști</a>
             <a href="/admin/tickets">Bilete</a>
+            <a href="/admin/participations">Participări</a>
             <a href="/logout" class="mt-5">Deconectare</a>
         </div>
 
@@ -28,17 +29,20 @@
                 <a href="/admin/shows" class="btn btn-secondary">Înapoi la Spectacole</a>
             </div>
 
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
             <div class="card">
                 <div class="card-header">Detalii Spectacol</div>
                 <div class="card-body">
                     <form th:action="@{/admin/shows/add}" method="post" class="row g-3">
                         <div class="col-md-6">
                             <label for="titlu" class="form-label">Titlu</label>
-                            <input type="text" class="form-control" id="titlu" name="titlu" required>
+                            <input type="text" class="form-control" id="titlu" name="titlu">
                         </div>
                         <div class="col-md-6">
                             <label for="id_locatie" class="form-label">Locație</label>
-                            <select class="form-select" id="id_locatie" name="id_locatie" required>
+                            <select class="form-select" id="id_locatie" name="id_locatie">
                                 <option value="" disabled selected>Selecționează locația</option>
                                 <option th:each="loc : ${locations}"
                                         th:value="${loc.id_locatie}"
@@ -48,15 +52,19 @@
                         </div>
                         <div class="col-md-6">
                             <label for="data_spectacol" class="form-label">Data și ora</label>
-                            <input type="datetime-local" class="form-control" id="data_spectacol" name="data_spectacol" required>
+                            <input type="datetime-local" class="form-control" id="data_spectacol" name="data_spectacol">
                         </div>
                         <div class="col-md-6">
                             <label for="pret_bilet" class="form-label">Preț bilet</label>
-                            <input type="number" step="0.01" min="0" class="form-control" id="pret_bilet" name="pret_bilet" required>
+                            <input type="number" class="form-control" id="pret_bilet" name="pret_bilet">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="durata_minute" class="form-label">Durata (minute)</label>
+                            <input type="number" class="form-control" id="durata_minute" name="durata_minute">
                         </div>
                         <div class="col-md-6">
                             <label for="artist1Id" class="form-label">Artist 1</label>
-                            <select class="form-select" id="artist1Id" name="artist1Id" required>
+                            <select class="form-select" id="artist1Id" name="artist1Id">
                                 <option value="" disabled selected>Selecționează artistul</option>
                                 <option th:each="artist : ${artists}"
                                         th:value="${artist.id_artist}"

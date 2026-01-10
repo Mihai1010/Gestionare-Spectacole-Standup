@@ -17,7 +17,7 @@
 
         <div class="form-group">
             <label for="citySelect">Oraș</label>
-            <select id="citySelect" class="form-control">
+            <select id="citySelect" name="city" class="form-control">
                 <option value="">-- Alege orașul --</option>
                 <option th:each="loc : ${locatii}"
                         th:value="${loc.oras}"
@@ -28,7 +28,7 @@
 
         <div class="form-group">
             <label for="showSelect">Spectacol</label>
-            <select id="showSelect" name="idSpectacol" class="form-control" required>
+            <select id="showSelect" name="idSpectacol" class="form-control">
                 <option value="">-- Alege spectacolul --</option>
                 <option th:each="show : ${shows}"
                         th:value="${show.id_spectacol}"
@@ -40,7 +40,7 @@
 
         <div class="form-group">
             <label for="randSelect">Rand (1-10)</label>
-            <select id="randSelect" name="rand" class="form-control" required>
+            <select id="randSelect" name="rand" class="form-control">
                 <option value="">-- Alege randul --</option>
                 <option th:each="i : ${#numbers.sequence(1,10)}"
                         th:value="${i}"
@@ -50,7 +50,7 @@
 
         <div class="form-group">
             <label for="locSelect">Loc (1-20)</label>
-            <select id="locSelect" name="loc" class="form-control" required>
+            <select id="locSelect" name="loc" class="form-control">
                 <option value="">-- Alege locul --</option>
                 <option th:each="i : ${#numbers.sequence(1,20)}"
                         th:value="${i}"
@@ -93,6 +93,19 @@
 
         citySelect.addEventListener('change', filterShows);
         filterShows();
+        showSelect.addEventListener('change', function () {
+            const selectedOption = showSelect.options[showSelect.selectedIndex];
+            if (!selectedOption) {
+                return;
+            }
+
+            const oras = selectedOption.getAttribute('data-oras');
+
+            if (oras) {
+                citySelect.value = oras;
+                filterShows();
+            }
+        });
     });
 </script>
 </body>

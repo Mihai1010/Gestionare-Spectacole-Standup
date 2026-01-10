@@ -19,6 +19,7 @@
             <a href="/admin/locations">Locații</a>
             <a href="/admin/artists" class="active">Artiști</a>
             <a href="/admin/tickets">Bilete</a>
+            <a href="/admin/participations">Participări</a>
             <a href="/logout" class="mt-5">Deconectare</a>
         </div>
 
@@ -28,29 +29,32 @@
                 <a href="/admin/artists" class="btn btn-secondary">Înapoi la Artiști</a>
             </div>
 
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
             <div class="card">
                 <div class="card-body">
                     <form th:action="@{/admin/artists/edit/{id}(id=${artist.id_artist})}" method="post">
                         <div class="mb-3">
                             <label for="nume" class="form-label">Nume</label>
-                            <input type="text" class="form-control" id="nume" name="nume" th:value="${artist.nume}" required>
+                            <input type="text" class="form-control" id="nume" name="nume" th:value="${artist.nume}">
                         </div>
                         <div class="mb-3">
                             <label for="prenume" class="form-label">Prenume</label>
-                            <input type="text" class="form-control" id="prenume" name="prenume" th:value="${artist.prenume}" required>
+                            <input type="text" class="form-control" id="prenume" name="prenume" th:value="${artist.prenume}">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" th:value="${artist.email}" required>
+                            <input type="email" class="form-control" id="email" name="email" th:value="${artist.email}">
                         </div>
                         <div class="mb-3">
                             <label for="telefon" class="form-label">Telefon</label>
-                            <input type="text" class="form-control" id="telefon" name="telefon" th:value="${artist.telefon}" required>
+                            <input type="text" class="form-control" id="telefon" name="telefon" th:value="${artist.telefon}">
                         </div>
                         <div class="mb-3">
                             <label for="data_nasterii" class="form-label">Data Nașterii</label>
                             <input type="date" class="form-control" id="data_nasterii" name="data_nasterii"
-                                   th:value="${#dates.format(artist.data_nasterii, 'yyyy-MM-dd')}" required>
+                                   th:value="${#dates.format(artist.data_nasterii, 'yyyy-MM-dd')}">
                         </div>
                         <button type="submit" class="btn btn-primary">Salvează</button>
                         <a href="/admin/artists" class="btn btn-outline-secondary ms-2">Anulează</a>

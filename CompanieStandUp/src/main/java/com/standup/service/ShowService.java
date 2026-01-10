@@ -18,12 +18,31 @@ public class ShowService {
     public Iterable<Map<String, Object>> getAllShows() {
         String sql = """
                 SELECT s.*, l.*,
+                       CASE
+                           WHEN s.data_spectacol > CURRENT_TIMESTAMP THEN 'Urmează'
+                           ELSE 'S-a desfasurat'
+                       END AS status,
                        (l.capacitate - (
                            SELECT COUNT(*) FROM Bilete b
                            WHERE b.id_spectacol = s.id_spectacol
                        )) AS remaining_seats
                 FROM Spectacole s
                 JOIN Locatii l ON s.id_locatie = l.id_locatie
+                """;
+        return jdbc.queryForList(sql);
+    }
+
+    public Iterable<Map<String, Object>> getUpcomingShows() {
+        String sql = """
+                SELECT s.*, l.*,
+                       (l.capacitate - (
+                           SELECT COUNT(*) FROM Bilete b
+                           WHERE b.id_spectacol = s.id_spectacol
+                       )) AS remaining_seats
+                FROM Spectacole s
+                JOIN Locatii l ON s.id_locatie = l.id_locatie
+                WHERE s.data_spectacol > CURRENT_TIMESTAMP
+                ORDER BY s.data_spectacol ASC
                 """;
         return jdbc.queryForList(sql);
     }
@@ -82,7 +101,7 @@ public class ShowService {
 
     @Transactional
     public void createShow(String titlu, int idLocatie, Timestamp dataSpectacol,
-                           double pretBilet, Integer artist1Id, Integer artist2Id, Integer artist3Id) {
+                           double pretBilet, int durata_minute, Integer artist1Id, Integer artist2Id, Integer artist3Id) {
         // Check for existing show at same time and location
         String checkSql = "SELECT COUNT(*) FROM Spectacole WHERE id_locatie = ? AND data_spectacol = ?";
         Integer count = jdbc.queryForObject(checkSql, Integer.class, idLocatie, dataSpectacol);
@@ -117,12 +136,12 @@ public class ShowService {
             }
         }
 
-        String insertSql = "INSERT INTO Spectacole (titlu, id_locatie, data_spectacol, pret_bilet) VALUES (?, ?, ?, ?)";
-        jdbc.update(insertSql, titlu, idLocatie, dataSpectacol, pretBilet);
+        String insertSql = "INSERT INTO Spectacole (titlu, id_locatie, data_spectacol, pret_bilet, durata_minute) VALUES (?, ?, ?, ?, ?)";
+        jdbc.update(insertSql, titlu, idLocatie, dataSpectacol, pretBilet, durata_minute);
 
         // Get the newly created show's id
-        String idSql = "SELECT MAX(id_spectacol) FROM Spectacole WHERE titlu = ? AND id_locatie = ? AND data_spectacol = ? AND pret_bilet = ?";
-        Integer showId = jdbc.queryForObject(idSql, Integer.class, titlu, idLocatie, dataSpectacol, pretBilet);
+        String idSql = "SELECT MAX(id_spectacol) FROM Spectacole WHERE titlu = ? AND id_locatie = ? AND data_spectacol = ? AND pret_bilet = ? AND durata_minute = ?";
+        Integer showId = jdbc.queryForObject(idSql, Integer.class, titlu, idLocatie, dataSpectacol, pretBilet, durata_minute);
 
         if (showId != null) {
             String insertParticipareSql = "INSERT INTO Participari (id_spectacol, id_artist) VALUES (?, ?)";
