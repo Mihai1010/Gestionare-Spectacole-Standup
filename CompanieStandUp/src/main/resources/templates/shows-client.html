@@ -13,7 +13,7 @@
         <label for="cityFilter">Filtrează după oraș:</label>
         <select id="cityFilter" class="form-control">
             <option value="">Toate orașele</option>
-            <!-- Opțiunile de oraș vor fi populate din JavaScript pe baza rândurilor din tabel -->
+            
         </select>
     </div>
 
@@ -52,7 +52,7 @@
         const cityFilter = document.getElementById('cityFilter');
         const rows = document.querySelectorAll('table tbody tr[th\\:each], table tbody tr[data-oras]');
 
-        // Construim lista unică de orașe din rânduri
+       
         const cities = new Set();
         rows.forEach(row => {
             const oras = row.getAttribute('data-oras');
@@ -61,7 +61,7 @@
             }
         });
 
-        // Adăugăm opțiunile în select
+       
         cities.forEach(oras => {
             const option = document.createElement('option');
             option.value = oras;

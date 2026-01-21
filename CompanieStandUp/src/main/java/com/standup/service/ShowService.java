@@ -1,3 +1,9 @@
+/**
+ * Serviciu pentru gestionarea spectacolelor: listare, creare, recomandări și rapoarte.
+ *
+ * @author Necula Mihai
+ * @version 12 ianuarie 2026
+ */
 package com.standup.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,14 +108,14 @@ public class ShowService {
     @Transactional
     public void createShow(String titlu, int idLocatie, Timestamp dataSpectacol,
                            double pretBilet, int durata_minute, Integer artist1Id, Integer artist2Id, Integer artist3Id) {
-        // Check for existing show at same time and location
+        
         String checkSql = "SELECT COUNT(*) FROM Spectacole WHERE id_locatie = ? AND data_spectacol = ?";
         Integer count = jdbc.queryForObject(checkSql, Integer.class, idLocatie, dataSpectacol);
         if (count != null && count > 0) {
             throw new IllegalStateException("Există deja un spectacol la aceeași oră în această locație.");
         }
 
-        // Collect distinct non-null artist IDs
+        
         int providedCount = 0;
         java.util.LinkedHashSet<Integer> artistIds = new java.util.LinkedHashSet<>();
         if (artist1Id != null) { artistIds.add(artist1Id); providedCount++; }
@@ -126,7 +132,7 @@ public class ShowService {
             throw new IllegalStateException("Un spectacol poate avea maximum 3 artiști.");
         }
 
-        // Check that none of the artists are already in another show at the same time
+        
         String artistCheckSql = "SELECT COUNT(*) FROM Participari p JOIN Spectacole s ON p.id_spectacol = s.id_spectacol " +
                 "WHERE p.id_artist = ? AND s.data_spectacol = ?";
         for (Integer artistId : artistIds) {
@@ -139,7 +145,7 @@ public class ShowService {
         String insertSql = "INSERT INTO Spectacole (titlu, id_locatie, data_spectacol, pret_bilet, durata_minute) VALUES (?, ?, ?, ?, ?)";
         jdbc.update(insertSql, titlu, idLocatie, dataSpectacol, pretBilet, durata_minute);
 
-        // Get the newly created show's id
+        
         String idSql = "SELECT MAX(id_spectacol) FROM Spectacole WHERE titlu = ? AND id_locatie = ? AND data_spectacol = ? AND pret_bilet = ? AND durata_minute = ?";
         Integer showId = jdbc.queryForObject(idSql, Integer.class, titlu, idLocatie, dataSpectacol, pretBilet, durata_minute);
 
@@ -154,17 +160,17 @@ public class ShowService {
     @Transactional
     public void deleteShow(int id) {
         try {
-            // First delete participations for this show
+            
             String deleteParticipariSql = "DELETE FROM Participari WHERE id_spectacol = ?";
             int participariDeleted = jdbc.update(deleteParticipariSql, id);
             System.out.println("Deleted " + participariDeleted + " participations for show " + id);
 
-            // Then delete tickets for this show
+           
             String deleteTicketsSql = "DELETE FROM Bilete WHERE id_spectacol = ?";
             int ticketsDeleted = jdbc.update(deleteTicketsSql, id);
             System.out.println("Deleted " + ticketsDeleted + " tickets for show " + id);
 
-            // Finally, delete the show
+           
             String deleteShowSql = "DELETE FROM Spectacole WHERE id_spectacol = ?";
             int showsDeleted = jdbc.update(deleteShowSql, id);
             System.out.println("Deleted " + showsDeleted + " shows with id " + id);
@@ -174,7 +180,7 @@ public class ShowService {
             }
         } catch (Exception e) {
             System.err.println("Error deleting show " + id + ": " + e.getMessage());
-            throw e; // Re-throw to be handled by the controller
+            throw e;            
         }
     }
 

@@ -1,3 +1,9 @@
+/**
+ * Controller MVC care gestionează autentificarea, fluxurile pentru clienți și panoul de administrare.
+ *
+ * @author Necula Mihai
+ * @version 12 ianuarie 2026
+ */
 package com.standup.controller;
 
 import com.standup.service.ClientService;
@@ -14,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Map;
-
+import org.springframework.jdbc.core.JdbcTemplate;
 
 
 @Controller
@@ -32,6 +38,9 @@ public class LoginController {
     
     @Autowired
     private ArtistService artistService;
+
+    @Autowired
+    private JdbcTemplate jdbc;
 
     @GetMapping("/")
 
@@ -65,7 +74,7 @@ public class LoginController {
 
             Model model) {
 
-        // Validare simplă pe server pentru login
+       
         if (email == null || email.isBlank() || parola == null || parola.isBlank()) {
             model.addAttribute("error", "Emailul și parola sunt obligatorii.");
             return "login";
@@ -112,7 +121,7 @@ public class LoginController {
 
                                Model model) {
 
-        // Validare simplă pe server cu mesaje explicite
+        
         if (nume == null || nume.isBlank() || prenume == null || prenume.isBlank() ||
                 email == null || email.isBlank() || telefon == null || telefon.isBlank() ||
                 parola == null || parola.isBlank()) {
@@ -140,7 +149,7 @@ public class LoginController {
             return "signup";
         }
 
-        // Dacă totul este ok, creăm clientul și mergem la login
+        
         clientService.createClient(nume, prenume, email, telefon, parola);
 
         return "redirect:/login";
@@ -148,16 +157,28 @@ public class LoginController {
     }
 
     @GetMapping("/admin")
-
-    public String adminDashboard(Model model) {
+    public String adminDashboard(
+            @RequestParam(value = "city", required = false) String city,
+            Model model) {
         int userCount = clientService.countTotalUsers();
         int showsCount = clientService.countTotalShows();
         int ticketsCount = clientService.countTotalTickets();
+        List<String> cities = locationService.getAllCities();
+        
         model.addAttribute("adminEmail", "admin@admin.com");
         model.addAttribute("userCount", userCount);
-        model.addAttribute("showsCount",showsCount);
-        model.addAttribute("ticketsCount",ticketsCount);
-        return "admin"; 
+        model.addAttribute("showsCount", showsCount);
+        model.addAttribute("ticketsCount", ticketsCount);
+        model.addAttribute("cities", cities);
+        model.addAttribute("selectedCity", city);
+        
+        // If a city is selected, get locations with show counts
+        if (city != null && !city.isEmpty()) {
+            Iterable<Map<String, Object>> locations = locationService.getLocationsByCityWithShowCount(city);
+            model.addAttribute("locations", locations);
+        }
+        
+        return "admin";
     }
 
     @GetMapping("/admin/reports/popular")
@@ -179,11 +200,19 @@ public class LoginController {
     }
 
     @GetMapping("/admin/reports/artists")
-    public String artistPerformanceReport(Model model) {
-        List<Map<String, Object>> artistReport = artistService.getArtistPerformanceReport();
-        model.addAttribute("artistReport", artistReport);
-        return "artist-performance";
-    }
+public String artistPerformanceReport(
+        @RequestParam(value = "artistId", required = false) Integer artistId,
+        Model model) {
+    List<Map<String, Object>> artistReport = artistService.getArtistPerformanceReport(artistId);
+    model.addAttribute("artistReport", artistReport);
+    model.addAttribute("selectedArtistId", artistId);
+    
+    List<Map<String, Object>> allArtists = jdbc.queryForList(
+        "SELECT id_artist, CONCAT(nume, ' ', prenume) as nume_complet FROM Artisti ORDER BY nume, prenume");
+    model.addAttribute("allArtists", allArtists);
+    
+    return "artist-performance";
+}
 
     @GetMapping("/admin/reports/client-history")
     public String clientPurchaseHistory(@RequestParam(value = "clientId", required = false) Integer clientId,
@@ -213,9 +242,9 @@ public class LoginController {
             clientService.deleteClient(id);
             return "redirect:/admin/clients";
         } catch (Exception e) {
-            // Log the error for debugging
+            
             e.printStackTrace();
-            // Redirect back to clients page with an error message
+            
             return "redirect:/admin/clients?error=Error deleting client";
         }
     }
@@ -574,10 +603,10 @@ public class LoginController {
         Map<String, Object> client = clientService.getClientByEmail(email);
         model.addAttribute("client", client);
         model.addAttribute("locatii", clientService.getLocatii());
-        // Pentru cumpărarea de bilete afișăm doar spectacolele viitoare
+        
         model.addAttribute("shows", showService.getUpcomingShows());
 
-        // Preselect city and show if coming from recommendations
+       
         if (city != null && !city.isEmpty()) {
             model.addAttribute("selectedCity", city);
         }
@@ -613,7 +642,7 @@ public class LoginController {
                                      @RequestParam(value = "loc", required = false) Integer loc,
                                      RedirectAttributes redirectAttributes) {
 
-        // Validare în ordine: oraș, spectacol, rând, loc
+       
         if (city == null || city.isBlank()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Te rugăm să selectezi un oraș.");
             return "redirect:/cumpara-bilet";
@@ -649,7 +678,7 @@ public class LoginController {
             redirectAttributes.addFlashAttribute("errorMessage", "A apărut o eroare la achiziționarea biletului.");
         }
 
-        // La succes revenim pe pagina de cumpărare cu selecțiile păstrate
+        
         redirectAttributes.addAttribute("city", city);
         redirectAttributes.addAttribute("showId", idSpectacol);
         return "redirect:/cumpara-bilet";

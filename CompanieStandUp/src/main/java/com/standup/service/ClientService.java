@@ -1,3 +1,9 @@
+/**
+ * Serviciu pentru operații legate de clienți, bilete și rapoarte asociate acestora.
+ *
+ * @author Necula Mihai
+ * @version 12 ianuarie 2026
+ */
 package com.standup.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +139,7 @@ public class ClientService {
     public int countTotalUsers() {
     String sql = "SELECT COUNT(id_client) FROM Clienti";
     Integer count = jdbc.queryForObject(sql, Integer.class);
-    return count != null ? count : 0;  // Return 0 if count is null
+    return count != null ? count : 0;  
     }
 
     public int countTotalShows(){

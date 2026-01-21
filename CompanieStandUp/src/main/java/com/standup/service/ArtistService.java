@@ -1,3 +1,9 @@
+/**
+ * Serviciu pentru gestionarea artiștilor și a participărilor acestora la spectacole.
+ *
+ * @author Necula Mihai
+ * @version 12 ianuarie 2026
+ */
 package com.standup.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,25 +23,26 @@ public class ArtistService {
         return jdbc.queryForList(sql);
     }
 
-    public List<Map<String, Object>> getArtistPerformanceReport() {
-        String sql = """
-                SELECT a.id_artist,
-                       a.nume,
-                       a.prenume,
-                       COUNT(DISTINCT p.id_spectacol)                    AS shows_count,
-                       COALESCE(SUM(s.pret_bilet), 0)                     AS total_revenue,
-                       COALESCE(AVG(s.pret_bilet), 0)                     AS avg_ticket_price,
-                       MIN(s.data_spectacol)                              AS first_show_date,
-                       MAX(s.data_spectacol)                              AS last_show_date
-                FROM Artisti a
-                         LEFT JOIN Participari p ON a.id_artist = p.id_artist
-                         LEFT JOIN Spectacole s ON p.id_spectacol = s.id_spectacol
-                GROUP BY a.id_artist, a.nume, a.prenume
-                HAVING COUNT(DISTINCT p.id_spectacol) > 0
-                ORDER BY total_revenue DESC
-                """;
-        return jdbc.queryForList(sql);
-    }
+    public List<Map<String, Object>> getArtistPerformanceReport(Integer artistId) {
+    String sql = """
+            SELECT a.id_artist,
+                   a.nume,
+                   a.prenume,
+                   COUNT(DISTINCT p.id_spectacol) AS shows_count,
+                   COALESCE(SUM(s.pret_bilet), 0) AS total_revenue,
+                   COALESCE(AVG(s.pret_bilet), 0) AS avg_ticket_price,
+                   MIN(s.data_spectacol) AS first_show_date,
+                   MAX(s.data_spectacol) AS last_show_date
+            FROM Artisti a
+            LEFT JOIN Participari p ON a.id_artist = p.id_artist
+            LEFT JOIN Spectacole s ON p.id_spectacol = s.id_spectacol
+            WHERE (? IS NULL OR a.id_artist = ?)
+            GROUP BY a.id_artist, a.nume, a.prenume
+            HAVING COUNT(DISTINCT p.id_spectacol) > 0
+            ORDER BY total_revenue DESC
+            """;
+    return jdbc.queryForList(sql, artistId, artistId);
+}
 
     public Iterable<Map<String, Object>> getAllParticipations() {
         String sql = """
@@ -64,11 +71,11 @@ public class ArtistService {
     @Transactional
     public void deleteArtist(int id) {
         try {
-            // First delete from Participari
+            
             String deleteParticipariSql = "DELETE FROM Participari WHERE id_artist = ?";
             jdbc.update(deleteParticipariSql, id);
             
-            // Then delete the artist
+            
             String deleteArtistSql = "DELETE FROM Artisti WHERE id_artist = ?";
             int rowsAffected = jdbc.update(deleteArtistSql, id);
             

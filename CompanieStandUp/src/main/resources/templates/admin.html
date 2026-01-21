@@ -10,7 +10,7 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
+            
             <div class="col-md-2 sidebar">
                 <h4 class="text-center mb-4">Admin Panel</h4>
                 <hr>
@@ -24,7 +24,7 @@
                 <a href="/logout" class="mt-5">Deconectare</a>
             </div>
             
-            <!-- Main Content -->
+            
             <div class="col-md-10 main-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Admin Dashboard</h2>
@@ -39,7 +39,7 @@
 
                 <div th:if="${errorMessage}" class="alert alert-danger mt-2" th:text="${errorMessage}"></div>
 
-                <!-- Report Buttons -->
+                
                 <div class="row mt-4">
                     <div class="col-md-3 mb-3">
                         <div class="card h-100">
@@ -82,7 +82,7 @@
                     </div>
                 </div>
 
-                <!-- Stats Cards -->
+            
                 <div class="row mt-4">
                     <div class="col-md-4 mb-4">
                         <div class="card">
@@ -108,6 +108,63 @@
                                 <h5 class="card-title">Total Bilete</h5>
                                 <h2 class="card-text" th:text="${ticketsCount}">Loading...</h2>
                                 <a href="/admin/tickets" class="btn btn-sm btn-primary">Vezi tot</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- City Filter and Location Statistics -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Statistici locații pe oraș</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="get" action="/admin" class="row g-3 align-items-end mb-4">
+                                    <div class="col-md-4">
+                                        <label for="city" class="form-label">Selectează orașul</label>
+                                        <select class="form-select" id="city" name="city">
+                                            <option value="">Toate orașele</option>
+                                            <option 
+                                                th:each="city : ${cities}" 
+                                                th:value="${city}"
+                                                th:text="${city}"
+                                                th:selected="${selectedCity == city}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary">Filtrează</button>
+                                        <a th:href="@{/admin}" class="btn btn-outline-secondary ms-2" th:if="${selectedCity}">Resetează</a>
+                                    </div>
+                                </form>
+
+                                <div th:if="${locations}">
+                                    <h6 class="mb-3" th:text="'Locații în ' + ${selectedCity} + ':'"></h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nume locație</th>
+                                                    <th>Adresă</th>
+                                                    <th>Capacitate</th>
+                                                    <th>Spectacole viitoare</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="loc : ${locations}">
+                                                    <td th:text="${loc.nume_locatie}"></td>
+                                                    <td th:text="${loc.strada + ', ' + loc.numar}"></td>
+                                                    <td th:text="${loc.capacitate}"></td>
+                                                    <td th:text="${loc.upcoming_shows_count}" 
+                                                        th:class="${loc.upcoming_shows_count > 0} ? 'text-success fw-bold' : ''">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

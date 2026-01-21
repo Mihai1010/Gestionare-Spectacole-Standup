@@ -1,3 +1,9 @@
+/**
+ * Clasa principală a aplicației Spring Boot pentru gestionarea spectacolelor de stand-up.
+ *
+ * @author Necula Mihai
+ * @version 12 ianuarie 2026
+ */
 package com.standup;
 
 import org.springframework.boot.SpringApplication;
